@@ -114,6 +114,10 @@ const authSchema = new Schema({
         type: String,
         required: true,
       },
+      accountBalance: {
+        type: Number,
+        default: 100000,
+      },
       createdAt: {
         type: Date,
         default: Date.now,
