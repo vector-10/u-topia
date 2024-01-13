@@ -75,11 +75,11 @@ const authSchema = new Schema({
         maxlength: 4,
         required: [true, "Please choose a 4 digit transfer pin"]
       },
-role: {
-type: String,
-required:[true, "Please select a role on the platform"],
-enum: ["Company", "student", "admin"]
-},
+      role: {
+      type: String,
+      required:[true, "Please select a role on the platform"],
+      enum: ["Company", "student", "admin"]
+      },
       // Extra Security
       maritalStatus: {
         type: String,
