@@ -1,5 +1,18 @@
- const getSampleData = (req, res) => {
-    res.json({ message: " Hello from sample controller " })
+const User = require('../models/authModels');
+const catchAsyncErrors = require('../middleware/catchAsyncErrors');
+const ErrorHandler = require('../utils/errorHandler');
 
-  }
-  module.exports = { getSampleData }
+const createNewUser = catchAsyncErrors(async(req, res) => {
+  // first we set the parameters needed from the user to the req.body
+  const { firstName, middelName, lastName, dateOfBirth, gender, nationality, salutation, address, email,
+     mobileNumber, password, confirmPassword, bvn, transferPin, maritalStatus, occupation,
+      employmentStatus, sourceofIncome, city, state, accountNumber } = req.body;
+
+      
+
+
+
+})
+
+
+module.exports = {createNewUser}

@@ -52,12 +52,16 @@ const authSchema = new Schema({
         unique: true,
         validate: [validator.isEmail, "Please enter a valid email"],
       },
-      preferredMobileNumber: {
+      mobileNumber: {
         type: String,
         required: [true, "Please provide a preferred number to open an account"],
       },
       //Security Information
       password: {
+        type: String,
+        required: [true, "Please provide your password to create an account"],
+      },
+      confirmPassword: {
         type: String,
         required: [true, "Please provide your password to create an account"],
       },
