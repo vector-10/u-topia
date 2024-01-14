@@ -15,4 +15,4 @@ const authenticatedUser = catchAsyncErrors(async(req, res, next) => {
   next();
 })
 
-module.exports = {authenticatedUser}
+module.exports = { authenticatedUser }

@@ -2,26 +2,26 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
-
-const authSchema = new Schema({
+// create schema for user object
+const authSchema = new mongoose.Schema({
     // Personal Information
     firstName: {
         type: String,
         required: [true, "Please provide a FirstName to create an account"],
-        minlength: 3,
+        minlength: 6,
         maxlength: [20, "Your FirstName should not exceed 20 characters"],
       },
       middleName: {
         type: String,
         required: [true, "Please provide a middlename to create an account"],
-        minlength: 3,
-        maxlength: [20, "Your FirstName should not exceed 20 characters"],
+        minlength: 6,
+        maxlength: [20, "Your middleName should not exceed 20 characters"],
       },
       lastName: {
         type: String,
         required: [true, "Please provide a lastname to create an account"],
-        minlength: 3,
-        maxlength: [20, "Your FirstName should not exceed 20 characters"],
+        minlength: 6,
+        maxlength: [20, "Your lastName should not exceed 20 characters"],
       },
       dateOfBirth: {
         type: Date,
@@ -76,9 +76,9 @@ const authSchema = new Schema({
         required: [true, "Please choose a 4 digit transfer pin"]
       },
       role: {
-      type: String,
-      required:[true, "Please select a role on the platform"],
-      enum: ["Company", "student", "admin"]
+        type: String,
+        required:[true, "Please select a role on the platform"],
+        enum: ["company", "student", "admin"]
       },
       // Extra Security
       maritalStatus: {
@@ -87,7 +87,7 @@ const authSchema = new Schema({
           true,
           "Please provide mother's maiden name to create an account",
         ],
-        enum: ["Married", "Single"],
+        enum: ["married", "single"],
       },
       occupation: {
         type: String,

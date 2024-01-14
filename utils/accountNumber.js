@@ -1,30 +1,27 @@
-// this is a utility file created to generate random account numbers, it makes use of the math.random.
-const User = require('../models/authModels');
-const ErrorHandler = require('../utils/errorHandler');
-const catchAsyncErrors = require('../middleware/catchAsyncErrors');
+const User = require("../models/authModels");
 
-const assignAccountNumber = catchAsyncErrors(async(req, res, next) => {
-    //define account number, set unique as a false boolean until checked in database
-    let accountNumber;
-    let isUnique = false;
+const generateAccountNumber = () => {
+  const min = 1000000000;
+  const max = 9999999999;
 
-    while(!isUnique) {
-        accountNumber = generateAccountNumber();
+  return (Math.floor(Math.random() * (max - min + 1)) + min).toString();
+};
+
+const assignAccountNumber = async (user) => {
+  let accountNumber;
+  let isUnique = false;
+
+  while (!isUnique) {
+    accountNumber = generateAccountNumber();
+
+    const existingAccount = await User.findOne({ accountNumber });
+
+    if (!existingAccount) {
+      isUnique = true;
     }
+  }
 
-    try {
-        //check to see if account number already exists in DB
-        const existingAccount = await User.findOne({ accountNumber });
+  return accountNumber;
+};
 
-        if(!existingAccount) 
-            isUnique = true;
-   
-    } catch (error) {
-        console.log(error);
-        return next( new ErrorHandler ("Account Number already exists, please try again", 500))
-    }
-    return accountNumber;
-})
-
-
-module.exports = { assignAccountNumber };
+module.exports = assignAccountNumber;

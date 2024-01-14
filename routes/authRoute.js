@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { authController } = require('../controllers/authController');
+const { createNewUser } = require('../controllers/authController');
    
 //Define routes and methods
-router.route('/create-user').post(authController)
+router.route('/create-user').post(createNewUser);
    
 
 
