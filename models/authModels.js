@@ -5,24 +5,13 @@ const bcrypt = require('bcryptjs');
 // create schema for user object
 const authSchema = new mongoose.Schema({
     // Personal Information
-    firstName: {
+      name: {
         type: String,
         required: [true, "Please provide a FirstName to create an account"],
-        minlength: 6,
-        maxlength: [20, "Your FirstName should not exceed 20 characters"],
+        minlength: 3,
+        maxlength: [40, "Your FirstName should not exceed 20 characters"],
       },
-      middleName: {
-        type: String,
-        required: [true, "Please provide a middlename to create an account"],
-        minlength: 6,
-        maxlength: [20, "Your middleName should not exceed 20 characters"],
-      },
-      lastName: {
-        type: String,
-        required: [true, "Please provide a lastname to create an account"],
-        minlength: 6,
-        maxlength: [20, "Your lastName should not exceed 20 characters"],
-      },
+
       dateOfBirth: {
         type: Date,
         required: [true, "Please provide an date of birth to create an account"],
