@@ -11,7 +11,6 @@ const authSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: [40, "Your FirstName should not exceed 20 characters"],
       },
-
       dateOfBirth: {
         type: Date,
         required: [true, "Please provide an date of birth to create an account"],

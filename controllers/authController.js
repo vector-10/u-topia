@@ -70,10 +70,101 @@ const loginUser = catchAsyncErrors(async(req, res, next) => {
 });
 
 //forgotPassword
+//reset password for user
+
+//To get user profile
+const getUserProfile = catchAsyncErrors(async(req, res, next) => {
+  // introduce try catch block for efficient error  handling
+  try {
+    //extract the user id from the params
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    console.log();
+    //validation to make sure that a user is found
+    if(!user){
+      return next(new ErrorHandler(`User with ID ${userId} does not exist on database`))
+    }
+    const userProfile = {
+      _id: user._id,
+      username: user.name,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
+      nationality: user.nationality,
+      address: user.address,
+      email: user.email,
+      mobileNumber: user.mobileNumber,
+      occupation: user.occupation,
+      city: user.city,
+      state: user.state,
+    };
+    
+    // return the result in json
+    res.status(200).json({
+      messaage: "User Profile successfully found",
+      userProfile
+    })
+
+  } catch (error) {
+    console.error(error);
+    return next(new ErrorHandler("User profile not successfully found", 500))
+  }
+})
+
+// to update user password
+const updatePassword = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+
+  //chaeck previous user password
+  const isMatched = await user.comparePassword(req.body.oldPassword);
+
+  if (!isMatched) {
+    return next(new ErrorHandler("old password is incorrect", 400));
+  }
+  user.password = req.body.password;
+  await user.save();
+
+  sendToken(user, 200, res);
+});
+
+// Now to update user profile
+const UpdateProfile = catchAsyncErrors(async(req, res, next) => {
+  const userUpdated = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  await User.findByIdAndUpdate(req.user.id, userUpdated, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Your student user profile has been updated!"
+  });
+});
+
+const logoutUser = catchAsyncErrors(async(req, res, next) => {
+  // inorder to logout users we have to expire the token stored in the cookie.
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  })
+  res.status(200).json({
+    success: true,
+    message: "You are logged out successfully!"
+  });
+
+});
 
 
 
 module.exports = {
   createNewUser,
-  loginUser
+  loginUser,
+  getUserProfile,
+  updatePassword,
+  UpdateProfile,
+  logoutUser
 }
