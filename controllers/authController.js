@@ -161,21 +161,38 @@ const updateProfile = catchAsyncErrors(async(req, res, next) => {
    }
 });
 
-// to update user password
-const updatePassword = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findById(req.user.id).select("+password");
+// Update password route
+const updatePassword = catchAsyncErrors(async(req, res, next) => {
+  try {
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
-  //chaeck previous user password
-  const isMatched = await user.comparePassword(req.body.oldPassword);
+    // Validate if newPassword and confirmNewPassword match
+    if (newPassword !== confirmNewPassword) {
+      return next(new ErrorHandler("New password and confirm new passwords do not match", 401));
+    }
 
-  if (!isMatched) {
-    return next(new ErrorHandler("old password is incorrect", 400));
+    // Fetch the user from the database
+    const user = await User.findById(req.user._id);
+
+    // Validate the current password
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      return next(new ErrorHandler("Please enter a new password", 401));
+    }
+    // Hash the new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error(error);
+    return next(new ErrorHandler("Internal server error", 50));
   }
-  user.password = req.body.password;
-  await user.save();
-
-  sendToken(user, 200, res);
 });
+
 
 
 const logoutUser = catchAsyncErrors(async(req, res, next) => {
