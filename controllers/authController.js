@@ -112,7 +112,7 @@ const getUserProfile = catchAsyncErrors(async(req, res, next) => {
 });
 
 // Now to update user profile
-const UpdateProfile = catchAsyncErrors(async(req, res, next) => {
+const updateProfile = catchAsyncErrors(async(req, res, next) => {
    try {
       // set the userId to req.params.id
   const userId = req.params.userId;
@@ -198,6 +198,6 @@ module.exports = {
   loginUser,
   getUserProfile,
   updatePassword,
-  UpdateProfile,
+  updateProfile,
   logoutUser
 }
