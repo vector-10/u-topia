@@ -52,7 +52,6 @@ const authSchema = new mongoose.Schema({
       },
       confirmPassword: {
         type: String,
-        required: [true, "Please provide your password to create an account"],
       },
       bvn: {
         type: Number,
