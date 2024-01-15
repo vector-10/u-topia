@@ -84,6 +84,7 @@ const getUserProfile = catchAsyncErrors(async(req, res, next) => {
     if(!user){
       return next(new ErrorHandler(`User with ID ${userId} does not exist on database`))
     }
+    // select the parameters to be sent to the client
     const userProfile = {
       _id: user._id,
       username: user.name,
@@ -108,7 +109,57 @@ const getUserProfile = catchAsyncErrors(async(req, res, next) => {
     console.error(error);
     return next(new ErrorHandler("User profile not successfully found", 500))
   }
-})
+});
+
+// Now to update user profile
+const UpdateProfile = catchAsyncErrors(async(req, res, next) => {
+   try {
+      // set the userId to req.params.id
+  const userId = req.params.userId;
+  const user = await User.findById(userId);
+  // ensure that user exists
+  if(!user){
+    return next(new ErrorHandler(`User with ID ${userId} not found for update`, 401))
+  };
+  //update user profile based on the fields you want to change
+  user.firstName = req.body.firstName || user.firstName;
+  user.middleName = req.body.middleName || user.middleName;
+  user.lastName = req.body.lastname || user.lastName;
+  user.dateOfBirth = req.body.dateOfBirth || user.dateOfBirth;
+  user.gender = req.body.gender || user.gender;
+  user.nationality = req.body.nationality || user.nationality;
+  user.address = req.body.address || user.address;
+  user.email = req.body.email || user.email;
+  user.mobileNumber = req.body.mobileNumber || user.mobileNumber;
+  user.occupation = req.body.occupation || user.occupation;
+  user.city = req.body.city || user.city;
+  user.state = req.body.state || user.state;
+  user.employmentStatus = req.body.employmentStatus || user.employmentStatus;
+
+   // Save the updated user
+   await user.save();
+   //return the updated parameters
+   res.status(200).json({
+    message: "User Profile successfully updated",
+    userProfile: {
+      _id: user._id,
+      username: user.name,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
+      nationality: user.nationality,
+      address: user.address,
+      email: user.email,
+      mobileNumber: user.mobileNumber,
+      occupation: user.occupation,
+      employmentStatus: user.employmentStatus,
+      city: user.city,
+      state: user.state,
+    },
+  });
+   } catch (error) {
+    return next(new ErrorHandler("Error updating user profile", 500));
+   }
+});
 
 // to update user password
 const updatePassword = catchAsyncErrors(async (req, res, next) => {
@@ -126,24 +177,6 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
   sendToken(user, 200, res);
 });
 
-// Now to update user profile
-const UpdateProfile = catchAsyncErrors(async(req, res, next) => {
-  const userUpdated = {
-    name: req.body.name,
-    email: req.body.email,
-  };
-
-  await User.findByIdAndUpdate(req.user.id, userUpdated, {
-    new: true,
-    runValidators: true,
-    useFindAndModify: false,
-  });
-
-  res.status(200).json({
-    success: true,
-    message: "Your student user profile has been updated!"
-  });
-});
 
 const logoutUser = catchAsyncErrors(async(req, res, next) => {
   // inorder to logout users we have to expire the token stored in the cookie.
