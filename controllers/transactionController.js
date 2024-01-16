@@ -32,8 +32,21 @@ const PeerLoanTransfer = catchAsyncErrors(async(req, res, next) => {
     const updatedSenderBalance = senderWallet.accountBalance - amount;
     const updatedReceiverBalance = (await Wallet.findOne({ user: receiver._id })).accountBalance + amount;
 
-    await Wallet.findOneAndUpdate({ user: senderId }, {})
+    await Wallet.findOneAndUpdate({ user: senderId }, { accountBalance: updatedSenderBalance });
+    await wallet.findOneAndUpdate({ user: receiver._id }, { accountBalance: updateReceiverbalance });
+
+    // record the transaction
+    await Transaction.create({
+        sender: senderId,
+        receiver: receiver._id,
+        amount,
+        description: req.body.description || 'Peer to Peer loan transfer',
+    });
+    // return success response in json    
+    res.status(200).json({ message: 'Funds transfer successful'});
    } catch (error) {
-    
+    return next(new ErrorHandler('Funds transfer failed', 500));
    }
 })
+
+modules.exports= { PeerLoanTransfer };
