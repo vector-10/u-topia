@@ -5,14 +5,15 @@ const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 
 // this middleware ensure that only authenticated users can access particular resources
 const authenticatedUser = catchAsyncErrors(async(req, res, next) => {
+  // access the user token stored in cookies
   const { token } = req.cookies;
-
+  //last minute validation
   if(!token) {
     return next(new ErrorHandler("User not authenticated, Login to access resource", 401))
   }
+  // decode and verify jwt
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   req.user = await User.findById(decoded.id);
-
   next();
 });
 
@@ -21,7 +22,7 @@ const authenticatedUser = catchAsyncErrors(async(req, res, next) => {
  const authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if(!roles.includes(req.user.role)) {
-      return next(new Errorhandler(`Role ${req.user.role} is not allowed to access this resource`, 403))
+      return next(new ErrorHandler(`Role ${req.user.role} is not allowed to access this resource`, 403))
     }
     next();
   }
