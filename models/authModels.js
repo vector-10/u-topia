@@ -105,6 +105,10 @@ const authSchema = new mongoose.Schema({
         type: Number,
         default: 100000,
       },
+      creditScore:{
+        type: Number,
+        default: 100
+      },
       createdAt: {
         type: Date,
         default: Date.now,
@@ -123,6 +127,9 @@ authSchema.pre("save", async function (next) {
 authSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
 }
+
+// To calculate credit score based on user balance 
+
 
 // export authentication schema in the name of User
 module.exports = mongoose.model('User', authSchema);

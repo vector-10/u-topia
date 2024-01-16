@@ -188,14 +188,12 @@ const updatePassword = catchAsyncErrors(async(req, res, next) => {
     user.password = hashedNewPassword;
     await user.save();
 
-    res.status(200).json({ message: 'Password updated successfully', user });
+    sendToken(user, 200, res)
   } catch (error) {
     console.error(error);
     return next(new ErrorHandler(`Internal server error ${error}`, 500));
   }
 });
-
-
 
 const logoutUser = catchAsyncErrors(async(req, res, next) => {
   // inorder to logout users we have to expire the token stored in the cookie.
@@ -211,6 +209,61 @@ const logoutUser = catchAsyncErrors(async(req, res, next) => {
 });
 
 
+// ADMIN ROUTES IN THE APPLICATION
+
+//Get all users => /api/v1/admin/users
+const getAllUsers = catchAsyncErrors(async(req, res, next) => {
+  // first we run a query for mongoDB database for finding all users
+  const users = await User.find();
+
+  const numberOfUsers = await User.countDocuments();
+
+  //return users .in json format
+  res.ststus(200).json({
+    message: "All users successfully found",
+    users,
+    userCount: numberOfUsers
+  })
+})
+
+//Get all users => /api/v1/admin/getProfile
+const getUserProfileDetails = catchAsyncErrors(async(req, res, next) => {
+  // first we se the ID of the user
+  const userId = req.params.userId;
+  const user = User.findById(userId);
+  // for basic validation of the user search
+  if(!user){
+    return next(new ErrorHandler(`User with ID ${userId} not found on the database`))
+  }
+// return the user in json format
+  res.status(200).json({
+    message:"User Profile successfully found",
+    user
+  })
+})
+
+//Get all users => /api/v1/admin/deleteUser
+const deleteUser = catchAsyncErrors(async(req, res, next) => {
+  // get the user throught the ID
+  const userId = await req.params.id;
+  const user = await User.findById(userId);
+  //basic validation
+  if(!user){
+    return next(new ErrorHandler(`User with ID ${userId} not found on the database`))
+  }
+
+  // delete documents from the database
+  await User.remove();
+
+  
+  res.status(200).json({
+    message: "user successfuully deleted from database",
+    user,
+  });
+
+})
+
+// Remember to test all keywords today
 
 module.exports = {
   createNewUser,
@@ -218,5 +271,8 @@ module.exports = {
   getUserProfile,
   updatePassword,
   updateProfile,
-  logoutUser
+  getAllUsers,
+  getUserProfileDetails,
+  logoutUser,
+  deleteUser
 }
