@@ -130,6 +130,7 @@ authSchema.methods.comparePassword = async function (enteredPassword) {
 
 // To calculate credit score based on user balance 
 
+//hash the user pin
 
 // export authentication schema in the name of User
 module.exports = mongoose.model('User', authSchema);
