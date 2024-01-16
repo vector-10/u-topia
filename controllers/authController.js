@@ -84,7 +84,7 @@ const getUserProfile = catchAsyncErrors(async(req, res, next) => {
     if(!user){
       return next(new ErrorHandler(`User with ID ${userId} does not exist on database`))
     }
-    // select the parameters to be sent to the client
+    // select the parameters to be sent to the client, to ensure security and protect information
     const userProfile = {
       _id: user._id,
       username: user.name,
@@ -101,10 +101,9 @@ const getUserProfile = catchAsyncErrors(async(req, res, next) => {
     
     // return the result in json
     res.status(200).json({
-      messaage: "User Profile successfully found",
+      message: "User Profile successfully found",
       userProfile
     })
-
   } catch (error) {
     console.error(error);
     return next(new ErrorHandler("User profile not successfully found", 500))
@@ -215,11 +214,10 @@ const logoutUser = catchAsyncErrors(async(req, res, next) => {
 const getAllUsers = catchAsyncErrors(async(req, res, next) => {
   // first we run a query for mongoDB database for finding all users
   const users = await User.find();
-
+// to count the number of users on the database and return it
   const numberOfUsers = await User.countDocuments();
-
   //return users .in json format
-  res.ststus(200).json({
+  res.status(200).json({
     message: "All users successfully found",
     users,
     userCount: numberOfUsers
@@ -228,19 +226,25 @@ const getAllUsers = catchAsyncErrors(async(req, res, next) => {
 
 //Get all users => /api/v1/admin/getProfile
 const getUserProfileDetails = catchAsyncErrors(async(req, res, next) => {
-  // first we se the ID of the user
-  const userId = req.params.userId;
-  const user = User.findById(userId);
-  // for basic validation of the user search
-  if(!user){
-    return next(new ErrorHandler(`User with ID ${userId} not found on the database`))
+  // introduce try catch block for efficient error  handling
+  try {
+    //extract the user id from the params
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    //validation to make sure that a user is found
+    if(!user){
+      return next(new ErrorHandler(`User with ID ${userId} does not exist on database`))
+    }    
+    // return the result in json
+    res.status(200).json({
+      message: "User Profile successfully found",
+      user
+    })
+  } catch (error) {
+    console.error(error);
+    return next(new ErrorHandler("User profile not successfully found", 500))
   }
-// return the user in json format
-  res.status(200).json({
-    message:"User Profile successfully found",
-    user
-  })
-})
+});
 
 //Get all users => /api/v1/admin/deleteUser
 const deleteUser = catchAsyncErrors(async(req, res, next) => {
@@ -251,11 +255,9 @@ const deleteUser = catchAsyncErrors(async(req, res, next) => {
   if(!user){
     return next(new ErrorHandler(`User with ID ${userId} not found on the database`))
   }
-
   // delete documents from the database
   await User.remove();
-
-  
+ 
   res.status(200).json({
     message: "user successfuully deleted from database",
     user,
@@ -263,7 +265,7 @@ const deleteUser = catchAsyncErrors(async(req, res, next) => {
 
 })
 
-// Remember to test all keywords today
+// Remember to test all API endpoints today
 
 module.exports = {
   createNewUser,

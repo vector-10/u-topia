@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
       message: "Hello from Server"
     })
   });
-
+// Routes auth, 
 app.use('/api/v1', userAuth);
 
 

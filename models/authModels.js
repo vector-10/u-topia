@@ -65,7 +65,7 @@ const authSchema = new mongoose.Schema({
       role: {
         type: String,
         required:[true, "Please select a role on the platform"],
-        enum: ["company", "student", "admin"]
+        enum: ["company", "user", "admin"]
       },
       // Extra Security
       maritalStatus: {
