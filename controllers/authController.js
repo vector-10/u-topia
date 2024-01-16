@@ -2,6 +2,7 @@ const User = require('../models/authModels');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorHandler');
 const sendToken = require('../utils/jwtToken');
+const bcrypt = require('bcryptjs');
 const assignAccountNumber = require('../utils/accountNumber');
 
 const createNewUser = catchAsyncErrors(async(req, res, next) => {
@@ -79,7 +80,6 @@ const getUserProfile = catchAsyncErrors(async(req, res, next) => {
     //extract the user id from the params
     const userId = req.params.userId;
     const user = await User.findById(userId);
-    console.log();
     //validation to make sure that a user is found
     if(!user){
       return next(new ErrorHandler(`User with ID ${userId} does not exist on database`))
@@ -172,12 +172,14 @@ const updatePassword = catchAsyncErrors(async(req, res, next) => {
     }
 
     // Fetch the user from the database
-    const user = await User.findById(req.user._id);
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    //console.log(user);
 
     // Validate the current password
     const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
     if (!isPasswordValid) {
-      return next(new ErrorHandler("Please enter a new password", 401));
+      return next(new ErrorHandler(`Please enter a new password`, 401));
     }
     // Hash the new password
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
@@ -186,10 +188,10 @@ const updatePassword = catchAsyncErrors(async(req, res, next) => {
     user.password = hashedNewPassword;
     await user.save();
 
-    res.status(200).json({ message: 'Password updated successfully' });
+    res.status(200).json({ message: 'Password updated successfully', user });
   } catch (error) {
     console.error(error);
-    return next(new ErrorHandler("Internal server error", 50));
+    return next(new ErrorHandler(`Internal server error ${error}`, 500));
   }
 });
 
