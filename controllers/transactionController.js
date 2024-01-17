@@ -6,9 +6,9 @@ const Wallet = require('../models/walletModel');
 
 // this will control logic for the performing of transactions on the app
 const PeerLoanTransfer = catchAsyncErrors(async(req, res, next) => {
-    //set the proper information from the user to the requestbody
+    //set the proper information from the user to the requestbody  
     const { senderId, receiverAccountNumber, amount, pin } = req.body;
-
+    // try and catch block for proper error handling
    try {
     // name the variable sender by and set it to id of sender
     const sender = await User.findById(senderId);
@@ -33,7 +33,7 @@ const PeerLoanTransfer = catchAsyncErrors(async(req, res, next) => {
     const updatedReceiverBalance = (await Wallet.findOne({ user: receiver._id })).accountBalance + amount;
 
     await Wallet.findOneAndUpdate({ user: senderId }, { accountBalance: updatedSenderBalance });
-    await wallet.findOneAndUpdate({ user: receiver._id }, { accountBalance: updateReceiverbalance });
+    await Wallet.findOneAndUpdate({ user: receiver._id }, { accountBalance: updatedReceiverBalance });
 
     // record the transaction
     await Transaction.create({
