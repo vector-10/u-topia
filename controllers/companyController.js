@@ -113,6 +113,17 @@ const createJob = catchAsyncErrors(async(req, res, next) => {
     }   
 })
 
+const getAllJobs = catchAsyncErrors(async(req, res, next) => {
+    // to get all the jobs from the database
+    const allJobs = await Jobs.find();
+
+    res.status(200).json({
+        message: "All jobs found",
+        allJobs
+    })
+    
+})
+
 const updateJob = catchAsyncErrors(async(req, res, next) => {
     try {
         // first we find the company profile that we want to update
@@ -150,24 +161,29 @@ const updateJob = catchAsyncErrors(async(req, res, next) => {
 })
 
 const deleteJob = catchAsyncErrors(async(req, res, next) => {
-    // find the job by id
+    try {
+        // find the job by id
     const jobId = req.params.jobId;
     const job = await Job.findById(jobId);
-
+    // simple validation for finding job
     if(!job) {
-        
+        return next(new ErrorHandler(`Job with ID ${jobId} not found in database`, 401))
     }
-
+    // delete job from database
+    await job.remove();
+    } catch (error) {
+        console.log(error);
+        return next(new ErrorHandler(`Job with ID ${jobId} was not deleted`, 500))       
+    }
 })
 
 
-
-
-
-
-
-
-
-
-
-module.exports = {createCompany, getCompanyProfile, updateCompanyProfile, createJob, updateJob, deleteJob}
+module.exports = 
+{    createCompany,
+     getCompanyProfile,
+     updateCompanyProfile,
+     createJob,
+     getAllJobs,
+     updateJob,
+    deleteJob
+    }
