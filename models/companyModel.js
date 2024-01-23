@@ -10,7 +10,7 @@ const companySchema = new mongoose.Schema({
     },
     contact: {
         type: Number,
-        required:  [true,"please provide a contact phone nu`mber"]
+        required:  [true,"please provide a contact phone number"]
     },
     contactEmail:{
         type: String,
@@ -20,21 +20,20 @@ const companySchema = new mongoose.Schema({
     },
     industry: {
         type: String,
-        required: true,
+        required: [true, "Please provide an industry category"],
+        enum: ['technology', 'health', 'finance', 'science', 'arts']
       },
       companyDescription: {
         type: String,
-        required: true,
+        required: [true, "Please provide a company description"]
       },
       websiteURL: {
         type: String,
       },
       companyAddress: {
         type: String,
-      },
-      
-
-
+        required: [true, "Please provide a company address"]
+      }
 })
 
 module.exports = mongoose.model('Company', companySchema);
