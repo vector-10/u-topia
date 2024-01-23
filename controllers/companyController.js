@@ -1,3 +1,4 @@
+// contains logic for the company and job controllers
 const Company = require('../models/companyModel');
 const Job = require('../models/jobModel');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
@@ -115,7 +116,7 @@ const createJob = catchAsyncErrors(async(req, res, next) => {
 
 const getAllJobs = catchAsyncErrors(async(req, res, next) => {
     // to get all the jobs from the database
-    const allJobs = await Jobs.find();
+    const allJobs = await Job.find();
 
     res.status(200).json({
         message: "All jobs found",
