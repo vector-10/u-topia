@@ -48,35 +48,57 @@ const getCompanyProfile = catchAsyncErrors(async(req, res, next) => {
     }
 })
 
-const updateCompanyProfile = async(catchAsyncErrors(req, res, next) => {
-    // first we find the company profile that we want to update
-    const companyId = req.params.companyId;
-    const company = await Company.findById(companyId);
-    // simple validation
-    if(!company) {
-        return next(new ErrorHandler(`Company with ID ${companyId} not found on database`, 401))
-    }
-    // update user profile based on the fields youwant to change
-    company.companyName = req.body.companyName || company.companyName
-    company.contactNumber = req.body.contactNumber || company.contactNumber
-    company.contactEmail = req.body.contactEmail || company.contactEmail
-    company.representativeName = req.body.representativeName || company.representativeName
-    company.industry = req.body.industry || company.industry
-    company.companyDescription = req.body.companyDescription || company.companyDescription
-    company.websiteURL = req.body.websiteURL || company.websiteURL
-    company.companyAddress = req.body.companyAddress || company.companyAddress
+const updateCompanyProfile = catchAsyncErrors(async(req, res, next) => {
+   try {
+     // first we find the company profile that we want to update
+     const companyId = req.params.companyId;
+     const company = await Company.findById(companyId);
+     // simple validation
+     if(!company) {
+         return next(new ErrorHandler(`Company with ID ${companyId} not found on database`, 401))
+     }
+     // update user profile based on the fields youwant to change
+     company.companyName = req.body.companyName || company.companyName
+     company.contactNumber = req.body.contactNumber || company.contactNumber
+     company.contactEmail = req.body.contactEmail || company.contactEmail
+     company.representativeName = req.body.representativeName || company.representativeName
+     company.industry = req.body.industry || company.industry
+     company.companyDescription = req.body.companyDescription || company.companyDescription
+     company.websiteURL = req.body.websiteURL || company.websiteURL
+     company.companyAddress = req.body.companyAddress || company.companyAddress
+ 
+     // save the updated company profile
+     await company.save();
+     // return updated parameters
+     res.status(200).json({
+        message: "Company profile successfully updated",
+        companyprofile:{
+         _id: company._id,
+         companyName: company.companyName,
+         contactNumber: company.contactNumber,
+         contactEmail: company.contactEmail,
+         representativeName: company.representativeName,
+         industry: company.industry,
+         companyDescription: company.companyDescription,
+         websiteURL: company.websiteURL,
+         companyAddress: company.companyAddress
+        }
+     })
+ 
+   } catch (error) {
+    console.log(error);
+    return next(new ErrorHandler("Error updating company profile", 500));
+   }
+});
 
-    // save the updated company profile
-    await company.save();
-    // return updated parameters
-    res.status(200).json({
-        _id: company._id,
-        companyName: company.
-    })
-
-})
-
-const createJob = async(catchAsyncErrors(req, res, next) => {
+const createJob = async(async(req, res, next) => {
+    // set properties for creating a job to erquest body
+    const { title, description, qualifications, duration, company} = req.body;
+    try {
+        
+    } catch (error) {
+        
+    }   
 
 })
 
