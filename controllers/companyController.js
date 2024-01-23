@@ -1,4 +1,5 @@
 const Company = require('../models/companyModel');
+const Job = require('../models/jobModel');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorHandler');
 
@@ -17,7 +18,7 @@ const createCompany = catchAsyncErrors(async(req, res, next) => {
             companyName, contactNumber, contactEmail, representativeName,
              industry, companyDescription, websiteURL, companyAddress
         })
-        //return company in json
+        //return created company in json
         res.status(201).json({
             message: "success",
             company
@@ -37,7 +38,7 @@ const getCompanyProfile = catchAsyncErrors(async(req, res, next) => {
     if(!company){
         return next(new ErrorHandler(`Company with ID ${companyId} does not exist on database`, 401))
       }
-      // return company in json
+      // return company profile in json
     res.status(200).json({
         message: "Company Profile found",
         company  
@@ -91,22 +92,71 @@ const updateCompanyProfile = catchAsyncErrors(async(req, res, next) => {
    }
 });
 
-const createJob = async(async(req, res, next) => {
-    // set properties for creating a job to erquest body
-    const { title, description, qualifications, duration, company} = req.body;
+const createJob = catchAsyncErrors(async(req, res, next) => {
     try {
-        
+            // set properties for creating a job to erquest body
+    const { title, description, qualifications, duration, company} = req.body;
+    const job = await Job.create({
+        title,
+        description,
+        qualifications,
+        duration,
+        company
+    });
+    res.status(200).json({
+        message: "Job successfully created",
+        job
+    })       
     } catch (error) {
-        
+        console.log(error);
+
     }   
+})
+
+const updateJob = catchAsyncErrors(async(req, res, next) => {
+    try {
+        // first we find the company profile that we want to update
+        const jobId = req.params.jobId;
+        const job = await Job.findById(jobId);
+        // simple validation
+        if(!job) {
+            return next(new ErrorHandler(`Job with ID ${jobId} not found on database`, 401))
+        }
+        // update user profile based on the fields youwant to change
+        job.title = req.body.title || job.title
+        job.description = req.body.description || job.description
+        job.qualifications = req.body.qualifications || job.qualifications
+        job.duration = req.body.duration || job.duration
+       
+        // save the updated company profile
+        await job.save();
+        // return updated parameters
+        res.status(200).json({
+           message: "Company profile successfully updated",
+           updatedJob:{
+            _id: job._id,
+            title: job.title,
+            description: job.description,
+            qualifications: job.qualifications,
+            duration: job.duration            
+           }
+        });    
+      } catch (error) {
+       console.log(error);
+       return next(new ErrorHandler("Error updating job details", 500));
+      }
+
 
 })
 
-const updateJob = async(catchAsyncErrors(req, res, next) => {
+const deleteJob = catchAsyncErrors(async(req, res, next) => {
+    // find the job by id
+    const jobId = req.params.jobId;
+    const job = await Job.findById(jobId);
 
-})
-
-const deleteJob = async(catchAsyncErrors(req, res, next) => {
+    if(!job) {
+        
+    }
 
 })
 
