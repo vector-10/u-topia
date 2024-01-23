@@ -8,7 +8,7 @@ const companySchema = new mongoose.Schema({
         minlength: [5, "COmpany name should be more than 5 characters"],
         maxlength: [30, "Company name cannot exceeed 30 characters"]
     },
-    contact: {
+    contactNumber: {
         type: Number,
         required:  [true,"please provide a contact phone number"]
     },
@@ -17,6 +17,10 @@ const companySchema = new mongoose.Schema({
         required:  [true,"Please provide a valid email address"],
         unique: [true, "Please provide a unique email address"],
         validate: [validator.isEmail, "Please provide a valid email"]
+    },
+    representativeName:{
+        type: String,
+        required: [true, "Please provide a company representative"],        
     },
     industry: {
         type: String,

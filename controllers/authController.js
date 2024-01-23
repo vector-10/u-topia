@@ -1,4 +1,5 @@
 const User = require('../models/authModels');
+const Compnay = require('../models/companyModel');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorHandler');
 const sendToken = require('../utils/jwtToken');
@@ -259,8 +260,24 @@ const deleteUser = catchAsyncErrors(async(req, res, next) => {
   await User.remove();
  
   res.status(200).json({
-    message: "user successfuully deleted from database",
-    user,
+    message: "user successfuully deleted from database"
+  });
+
+})
+//Get all users => /api/v1/admin/deleteUser
+const deleteCompany = catchAsyncErrors(async(req, res, next) => {
+  // get the user throught the ID
+  const companyId = await req.params.id;
+  const company = await Company.findById(companyId);
+  //basic validation
+  if(!company){
+    return next(new ErrorHandler(`User with ID ${companyId} not found on the database`))
+  }
+  // delete documents from the database
+  await Company.remove();
+ 
+  res.status(200).json({
+    message: "Company deleted from database"
   });
 
 })
