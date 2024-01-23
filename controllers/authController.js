@@ -1,5 +1,5 @@
 const User = require('../models/authModels');
-const Compnay = require('../models/companyModel');
+const Company = require('../models/companyModel');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorHandler');
 const sendToken = require('../utils/jwtToken');
@@ -264,7 +264,7 @@ const deleteUser = catchAsyncErrors(async(req, res, next) => {
   });
 
 })
-//Get all users => /api/v1/admin/deleteUser
+//Get all users => /api/v1/admin/deleteCompany
 const deleteCompany = catchAsyncErrors(async(req, res, next) => {
   // get the user throught the ID
   const companyId = await req.params.id;
@@ -293,5 +293,6 @@ module.exports = {
   getAllUsers,
   getUserProfileDetails,
   logoutUser,
-  deleteUser
+  deleteUser,
+  deleteCompany
 }
