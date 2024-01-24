@@ -97,17 +97,9 @@ const authSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a state to create an account"],
       },
-      accountNumber: {
-        type: String,
-        required: true,
-      },
-      accountBalance: {
-        type: Number,
-        default: 100000,
-      },
-      creditScore:{
-        type: Number,
-        default: 100
+      wallet: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Wallet',
       },
       createdAt: {
         type: Date,

@@ -4,7 +4,7 @@ const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorHandler');
 const sendToken = require('../utils/jwtToken');
 const bcrypt = require('bcryptjs');
-const assignAccountNumber = require('../utils/accountNumber');
+
 
 const createNewUser = catchAsyncErrors(async(req, res, next) => {
   // first we set the parameters needed from the user to the req.body
@@ -31,14 +31,13 @@ const createNewUser = catchAsyncErrors(async(req, res, next) => {
           // in the actual application, I can only refer to name for ease of state
       const name = `${firstName} ${middleName} ${lastName} `
       // console.log(name);
-        //Generate and assing account Number on user sign up
-        const accountNumber = await assignAccountNumber();
+       
         // console.log(accountNumber);
       //Now we create a new user with database operations
       const user = await User.create({
         name, dateOfBirth, gender, nationality, salutation, address, email,
      mobileNumber, password, bvn, transferPin, maritalStatus, occupation,
-      employmentStatus, sourceofIncome, city, state, accountNumber, role
+      employmentStatus, sourceofIncome, city, state, role
       });
       
       sendToken(user, 201, res)        

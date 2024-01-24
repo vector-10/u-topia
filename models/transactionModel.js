@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
+    wallet: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Wallet',
+      },
     sender: {
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User'
@@ -20,7 +24,6 @@ const transactionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-
 
 })
 
