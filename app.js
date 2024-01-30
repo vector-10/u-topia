@@ -31,7 +31,7 @@ app.use((err, req, res, next) => {
 
 // start the server process
 const PORT = process.env.PORT || 5000;
-// TO connect DB
+// To initialise connectDB function
 connectDB();
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
