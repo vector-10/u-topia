@@ -1,5 +1,6 @@
 const User = require('../models/authModels');
 const Company = require('../models/companyModel');
+const Job = require('../models/jobModel');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorHandler');
 const sendToken = require('../utils/jwtToken');
@@ -210,18 +211,47 @@ const logoutUser = catchAsyncErrors(async(req, res, next) => {
 
 // ADMIN ROUTES IN THE APPLICATION
 
+const getAllJobs = catchAsyncErrors(async(req, res, next) => {
+  try {
+    // check the number of jobs on the database
+  const numberOfJobs = Job.countDocuments({});
+  if(numberOfJobs === 0) {
+    return next(new Errorhandler ("No jobs currently exist in that database", 500))
+  }
+  // get all jobs from the database using the .find() method
+  const allJobs = await Job.find();
+
+  //return jobs in json
+  res.status(200).json({
+    message: "All jobs successfully found",
+    allJobs,
+    count: numberOfJobs
+  })
+  } catch (error) {
+    return next(new Errorhandler (`Jobs not successfully retreived`, error, 500))
+  }
+
+})
+
 //Get all users => /api/v1/admin/users
 const getAllUsers = catchAsyncErrors(async(req, res, next) => {
-  // first we run a query for mongoDB database for finding all users
-  const users = await User.find();
-// to count the number of users on the database and return it
-  const numberOfUsers = await User.countDocuments();
-  //return users .in json format
-  res.status(200).json({
-    message: "All users successfully found",
-    users,
-    userCount: numberOfUsers
-  })
+  try {
+    const numbersOfusers = User.countDocuments({});
+    if (numberOfUsers === 0) {
+      return next(new Errorhandler ("No users currently exist in that database", 500))
+    }
+    // get all users from the database
+    const allUsers = await User.find();
+    
+    // return users from the databse in json
+    res.status(200).json({
+      message: "All users successfully found",
+      allUsers,
+      count: numberOfUsers
+    })
+  } catch (error) {
+    return next(new Errorhandler ("Users could not be be retreived from the database", 500))
+  }  
 })
 
 //Get all users => /api/v1/admin/getProfile
@@ -290,6 +320,7 @@ module.exports = {
   updatePassword,
   updateProfile,
   getAllUsers,
+  getAllJobs,
   getUserProfileDetails,
   logoutUser,
   deleteUser,

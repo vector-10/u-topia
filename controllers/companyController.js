@@ -187,8 +187,7 @@ module.exports =
      getCompanyProfile,
      updateCompanyProfile,
      createJob,
-     getAllJobs,
-     getAllJobsbyCompany
+     getAllJobsbyCompany,
      updateJob,
     deleteJob
     }
