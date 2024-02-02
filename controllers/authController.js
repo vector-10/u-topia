@@ -10,7 +10,7 @@ const bcrypt = require('bcryptjs');
 const createNewUser = catchAsyncErrors(async(req, res, next) => {
   // first we set the parameters needed from the user to the req.body
   const { firstName, middleName, lastName, dateOfBirth, gender, nationality, salutation, address, email,
-     mobileNumber, password, confirmPassword, bvn, maritalStatus, occupation,
+     mobileNumber, password, confirmPassword, bvn, transferPin, maritalStatus, occupation,
       employmentStatus, sourceofIncome, city, state} = req.body;
 
       // to ensure the password and confirm password values are the same

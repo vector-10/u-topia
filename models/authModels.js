@@ -108,21 +108,33 @@ const authSchema = new mongoose.Schema({
 });
 
 // to hash the user password before it is verified the database
+
 authSchema.pre("save", async function (next) {
-    if(!this.isModified("password")) {
-        next();
+    if (!this.isModified("password")) {
+        return next();
     }
-    this.password = await bcrypt.hash(this.password, 10)
+
+    this.password = await bcrypt.hash(this.password, 10);
+
+    if (this.isModified("transferPin")) {
+        this.transferPin = await bcrypt.hash(this.transferPin.toString(), 10);
+    }
+
+    return next();
 });
 
-//compare user passwords to before saving to database
 authSchema.methods.comparePassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password)
+    return await bcrypt.compare(enteredPassword, this.password);
+}
+
+authSchema.methods.toJSON = function () {
+  const userObject = this.toObject();
+  userObject.dateOfBirth = this.dateOfBirth.toISOString();
+  return userObject;
 }
 
 // To calculate credit score based on user balance 
 
-//hash the user pin
 
 // export authentication schema in the name of User
 module.exports = mongoose.model('User', authSchema);
