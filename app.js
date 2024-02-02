@@ -10,12 +10,14 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-//Routes
+// Testing Routes
   app.get('/', (req, res) => {
     res.json({
       message: "Hello from Server"
     })
   });
+
+
 // Routes auth, 
 app.use('/api/v1', userAuth);
 

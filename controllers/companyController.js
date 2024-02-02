@@ -114,15 +114,18 @@ const createJob = catchAsyncErrors(async(req, res, next) => {
     }   
 })
 
-const getAllJobs = catchAsyncErrors(async(req, res, next) => {
-    // to get all the jobs from the database
-    const allJobs = await Job.find();
+const getAllJobsbyCompany = catchAsyncErrors(async(req, res, next) => {
+    //get the company ID from companyID
+    const companyId = req.params.companyId;
 
+    //fetch jobs created by specific company from the database
+    const companyJobs = await company.findById({ companyId: companyId })
+
+    // return the jobs specific to a company
     res.status(200).json({
-        message: "All jobs found",
-        allJobs
+        message: "Jobs created by company found",
+        companyJobs
     })
-    
 })
 
 const updateJob = catchAsyncErrors(async(req, res, next) => {
@@ -185,6 +188,7 @@ module.exports =
      updateCompanyProfile,
      createJob,
      getAllJobs,
+     getAllJobsbyCompany
      updateJob,
     deleteJob
     }
