@@ -11,7 +11,7 @@ const createCompany = catchAsyncErrors(async(req, res, next) => {
     // check to ensure unique emails are provided only
     const checkIfContactEmailExists = await Company.findOne({ contactEmail });
     if(checkIfContactEmailExists) {
-        return next(new ErrorHandler ("Please ensure that contact email provided is unique", 401))
+        return next(new ErrorHandler ("Company with Email already exists", 401))
     }
     // now to create the company using database methods
     try {
@@ -41,7 +41,7 @@ const getCompanyProfile = catchAsyncErrors(async(req, res, next) => {
       }
       // return company profile in json
     res.status(200).json({
-        message: "Company Profile found",
+        message: "Company Profile successfully found",
         company  
     })
     } catch (error) {
@@ -96,21 +96,20 @@ const updateCompanyProfile = catchAsyncErrors(async(req, res, next) => {
 const createJob = catchAsyncErrors(async(req, res, next) => {
     try {
             // set properties for creating a job to erquest body
-    const { title, description, qualifications, duration, company} = req.body;
+    const { title, description, qualifications, duration } = req.body;
     const job = await Job.create({
         title,
         description,
         qualifications,
         duration,
-        company
     });
-    res.status(200).json({
+    res.status(201).json({
         message: "Job successfully created",
         job
     })       
     } catch (error) {
         console.log(error);
-
+        return next(new ErrorHandler("Job creation failed", error, 500));
     }   
 })
 
@@ -119,7 +118,7 @@ const getAllJobsbyCompany = catchAsyncErrors(async(req, res, next) => {
     const companyId = req.params.companyId;
 
     //fetch jobs created by specific company from the database
-    const companyJobs = await company.findById({ companyId: companyId })
+    const companyJobs = await Company.findById({ companyId: companyId })
 
     // return the jobs specific to a company
     res.status(200).json({

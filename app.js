@@ -3,7 +3,9 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const userAuth = require('./routes/authRoute');
+const companyRoute = require('./routes/companyRoute');
 const connectDB = require('./database/connect');
+
 
 // Middleware
 app.use(express.json());
@@ -20,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes auth, 
 app.use('/api/v1', userAuth);
+app.use('/api/v1', companyRoute);
 
 
 // Error handling middleware

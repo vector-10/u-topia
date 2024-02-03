@@ -214,9 +214,9 @@ const logoutUser = catchAsyncErrors(async(req, res, next) => {
 const getAllJobs = catchAsyncErrors(async(req, res, next) => {
   try {
     // check the number of jobs on the database
-  const numberOfJobs = Job.countDocuments({});
+  const numberOfJobs = await Job.countDocuments({});
   if(numberOfJobs === 0) {
-    return next(new Errorhandler ("No jobs currently exist in that database", 500))
+    return next(new ErrorHandler ("No jobs currently exist in that database", 500))
   }
   // get all jobs from the database using the .find() method
   const allJobs = await Job.find();
@@ -228,7 +228,7 @@ const getAllJobs = catchAsyncErrors(async(req, res, next) => {
     count: numberOfJobs
   })
   } catch (error) {
-    return next(new Errorhandler (`Jobs not successfully retreived`, error, 500))
+    return next(new ErrorHandler (`Jobs not successfully retreived`, error, 500))
   }
 
 })
@@ -236,9 +236,9 @@ const getAllJobs = catchAsyncErrors(async(req, res, next) => {
 //Get all users => /api/v1/admin/users
 const getAllUsers = catchAsyncErrors(async(req, res, next) => {
   try {
-    const numbersOfusers = User.countDocuments({});
+    const numberOfUsers = await User.countDocuments({});
     if (numberOfUsers === 0) {
-      return next(new Errorhandler ("No users currently exist in that database", 500))
+      return next(new ErrorHandler ("No users currently exist in that database", 500))
     }
     // get all users from the database
     const allUsers = await User.find();
@@ -247,10 +247,10 @@ const getAllUsers = catchAsyncErrors(async(req, res, next) => {
     res.status(200).json({
       message: "All users successfully found",
       allUsers,
-      count: numberOfUsers
+      userCount: numberOfUsers
     })
   } catch (error) {
-    return next(new Errorhandler ("Users could not be be retreived from the database", 500))
+    return next(new ErrorHandler ("Users could not be be retreived from the database", error, 500))
   }  
 })
 
