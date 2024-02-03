@@ -2,8 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const userAuth = require('./routes/authRoute');
+const userAuthRoute = require('./routes/authRoute');
 const companyRoute = require('./routes/companyRoute');
+const jobRoute = require('./routes/jobRoute');
 const connectDB = require('./database/connect');
 
 
@@ -21,8 +22,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // Routes auth, 
-app.use('/api/v1', userAuth);
+app.use('/api/v1', userAuthRoute);
 app.use('/api/v1', companyRoute);
+app.use('/api/v1', jobRoute);
+
 
 
 // Error handling middleware

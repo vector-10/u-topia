@@ -96,12 +96,25 @@ const updateCompanyProfile = catchAsyncErrors(async(req, res, next) => {
 const createJob = catchAsyncErrors(async(req, res, next) => {
     try {
             // set properties for creating a job to erquest body
-    const { title, description, qualifications, duration } = req.body;
+    const { title, description, qualifications, duration, companyId } = req.body;
+
+    if(!companyId) {
+        return next(new ErrorHandler("Company ID is required to create a job", 400))
+    }
+
+    //to check if compant exists
+    const company = await Company.findById(companyId);
+    
+    if(!company) {
+        return next (new ErrorHandler("Specified company does not exist", 400))
+    }
+    // create job with the specified company 
     const job = await Job.create({
         title,
         description,
         qualifications,
         duration,
+        companyId: companyId,
     });
     res.status(201).json({
         message: "Job successfully created",
@@ -114,17 +127,22 @@ const createJob = catchAsyncErrors(async(req, res, next) => {
 })
 
 const getAllJobsbyCompany = catchAsyncErrors(async(req, res, next) => {
-    //get the company ID from companyID
-    const companyId = req.params.companyId;
+   try {
+     //get the company ID from companyID
+     const companyId = req.params.companyId;
 
-    //fetch jobs created by specific company from the database
-    const companyJobs = await Company.findById({ companyId: companyId })
-
-    // return the jobs specific to a company
-    res.status(200).json({
-        message: "Jobs created by company found",
-        companyJobs
-    })
+     //fetch jobs created by specific company from the database
+     const companyJobs = await Job.find({ company: companyId })
+ 
+     // return the jobs specific to a company
+     res.status(200).json({
+         message: "Jobs created by company found",
+         companyJobs
+     })
+   } catch (error) {
+    console.log(error);
+        return next(new ErrorHandler("Failed to get all Jobs by company", error, 500));
+   }
 })
 
 const updateJob = catchAsyncErrors(async(req, res, next) => {
