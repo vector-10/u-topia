@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 
 
 const createNewUser = catchAsyncErrors(async(req, res, next) => {
+  try {
   // first we set the parameters needed from the user to the req.body
   const { firstName, middleName, lastName, dateOfBirth, gender, nationality, salutation, address, email,
      mobileNumber, password, confirmPassword, bvn, transferPin, maritalStatus, occupation,
@@ -28,7 +29,7 @@ const createNewUser = catchAsyncErrors(async(req, res, next) => {
       // Now we define the role for the account to the first sign up
       let role = firstAccount? "admin":"user";
 
-      try {
+      
           // in the actual application, I can only refer to name for ease of state
       const name = `${firstName} ${middleName} ${lastName} `
       // console.log(name);
@@ -44,7 +45,7 @@ const createNewUser = catchAsyncErrors(async(req, res, next) => {
       sendToken(user, 201, res)        
       } catch (error) {
         console.log(error);
-        return next(new ErrorHandler("Error creating new user account:", 500))
+        return next(new ErrorHandler("Error creating new user account:", error, 500))
       }
      
 });

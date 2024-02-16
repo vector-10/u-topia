@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const userAuthRoute = require('./routes/authRoute');
 const companyRoute = require('./routes/companyRoute');
 const jobRoute = require('./routes/jobRoute');
+const walletRoute = require('./routes/walletRoute');
 const connectDB = require('./database/connect');
 
 
@@ -21,9 +22,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
   });
 
 
-// Routes auth, 
+// Routes auth, company, wallet, job
 app.use('/api/v1', userAuthRoute);
 app.use('/api/v1', companyRoute);
+app.use('/api/v1', walletRoute);
 app.use('/api/v1', jobRoute);
 
 

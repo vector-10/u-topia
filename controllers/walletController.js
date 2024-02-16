@@ -1,4 +1,4 @@
-const Wallet = require('../models/Wallet');
+const Wallet = require('../models/walletModel');
 const User = require('../models/authModels');
 const ErrorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
@@ -7,7 +7,7 @@ const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const createWallet = catchAsyncErrors(async (req, res, next) => {
     try {
         // to get the user ID from the authentication
-        const userId = req.user._id;
+        const userId = req.params.userId;
         //ensure that only users can create wallets
         const existingUser = await User.findById(userId);
         //simple check to continue
@@ -24,7 +24,14 @@ const createWallet = catchAsyncErrors(async (req, res, next) => {
         //save the wallet to the database
         await newWallet.save();
         // return wallet in json
-        res.status(201).json({ message: 'Wallet created successfully', wallet: newWallet });
+        res.status(201).json({
+         message: 'Wallet created successfully',
+         wallet: {
+          user: newWallet.user,
+          balance: newWallet.balance,
+          accountNumber: newWallet.accountNumber
+         }
+        });
     } catch (error) {
         console.error('Error creating wallet:', error.message);
         return next (new ErrorHandler("User wallet not created successfully"));        
@@ -48,6 +55,7 @@ const getWalletBalance = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler('Error getting wallet balance', 500));
   }
 });
+
 
 // Update Wallet Balance
 const updateWalletBalance = catchAsyncErrors(async (userId, amount) => {
