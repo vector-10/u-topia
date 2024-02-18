@@ -50,29 +50,29 @@ const getWalletBalance = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler('Wallet not found', 404));
     }
 
-    res.status(200).json({ balance: wallet.accountBalance });
+    res.status(200).json({ balance: wallet.balance });
   } catch (error) {
     return next(new ErrorHandler('Error getting wallet balance', 500));
   }
 });
 
 
-// Update Wallet Balance
-const updateWalletBalance = catchAsyncErrors(async (userId, amount) => {
-  try {
-    const wallet = await Wallet.findOne({ user: userId });
+// // Update Wallet Balance
+// const updateWalletBalance = catchAsyncErrors(async (userId, amount) => {
+//   try {
+//     const wallet = await Wallet.findOne({ user: userId });
 
-    if (!wallet) {
-      throw new ErrorHandler('Wallet not found', 404);
-    }
+//     if (!wallet) {
+//       throw new ErrorHandler('Wallet not found', 404);
+//     }
 
-    wallet.accountBalance += amount;
-    await wallet.save();
-  } catch (error) {
-    throw new ErrorHandler('Error updating wallet balance', 500);
-  }
-});
+//     wallet.balance += amount;
+//     await wallet.save();
+//   } catch (error) {
+//     throw new ErrorHandler('Error updating wallet balance', 500);
+//   }
+// });
 
 // Other wallet-related functions...
 
-module.exports = { getWalletBalance, updateWalletBalance, createWallet  };
+module.exports = { getWalletBalance, createWallet  };

@@ -18,7 +18,8 @@ const transactionSchema = new mongoose.Schema({
         required: [true, "Please provide and an amount"]
     },
     description:{
-        type: String
+        type: String,
+        retuired: [true, "Please provide a Loan description"]
     },
     date: {
         type: Date,

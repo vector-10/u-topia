@@ -4,49 +4,54 @@ const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const User = require('../models/authModels');
 const Wallet = require('../models/walletModel');
 
-// this will control logic for the performing of transactions on the app
-const PeerLoanTransfer = catchAsyncErrors(async(req, res, next) => {
-    //set the proper information from the user to the requestbody  
-    const { senderId, receiverAccountNumber, amount, pin } = req.body;
-    // try and catch block for proper error handling
-   try {
-    // name the variable sender by and set it to id of sender
-    const sender = await User.findById(senderId);
-    const receiver = await User.findOne({ accountNumber: receiverAccountNumber });    
-    // a little validation to ensure that sender and receiver are correct
-    if(!sender || !receiver) {
-        return next(new ErrorHandler("Invalid sender or receiver credentials", 400))
-    }
-    // to check if the sender has funds in the wallet currently
-    const senderWallet = await Wallet.findOne({ user: senderId });
-    //extra check
-    if(!senderWallet || senderWallet.accountBalance < amount) {
-        return next(new ErrorHandler("Account Balance is Insufficient", 400))
-    }
-    // to validate pin
-    if ( pin !== senderWallet.transferPin.toString()) {
-        return next(new ErrorHandler("Invalid pin number", 400))
-    }
+// the logic for the initiating peerloan transfers
+const peerLoanTransfer = catchAsyncErrors(async(req, res, next) => {
+    const senderId = req.params.senderId;
+    // set the requied parameters for a loan transfer to occur
+    const { amount, transferPin, description, receiverAccountNumber } = req.body;
 
-    //Update sender and receivers wallet balance to symbolize transfer
-    const updatedSenderBalance = senderWallet.accountBalance - amount;
-    const updatedReceiverBalance = (await Wallet.findOne({ user: receiver._id })).accountBalance + amount;
+    try {
+        // now to verify the sender and receiver
+        const sender = await User.findById(senderId);
+        const receiverWallet = await Wallet.findOne({ accountNumber : receiverAccountNumber });
+         // validation just incase either of them does not exist
+        if(!sender || !receiverWallet) {
+            return next(ErrorHandler("Invalid sender or receiver credentials", 400 ))
+        }
+        //  Ensure that the sender has enough money for the transfer
+        const senderWallet = await Wallet.findOne({ user: senderId});
+        // validation if amount if more than senders balance and throw error
+        if(!senderWallet || senderWallet.balance < amount ) {
+            return next(new ErrorHandler("Insufficient funds in senders wallet", 400))
+        }
+        // validate pin to ensure its accurate
+        if(transferPin !== senderWallet.transferPin.toString()){
+            return next( new ErrorHandler("Invalid transfer PIN entered", 400 ))
+        }
 
-    await Wallet.findOneAndUpdate({ user: senderId }, { accountBalance: updatedSenderBalance });
-    await Wallet.findOneAndUpdate({ user: receiver._id }, { accountBalance: updatedReceiverBalance });
+        // update sender and receivers balance
+        const updatedSendersBalance = senderWallet.balance - amount;
+        const updateReceiversBalance = receiverWallet.balance + amount;
 
-    // record the transaction
-    await Transaction.create({
-        sender: senderId,
-        receiver: receiver._id,
-        amount,
-        description: req.body.description || 'Peer to Peer loan transfer',
-    });
-    // return success response in json    
-    res.status(200).json({ message: 'Funds transfer successful'});
-   } catch (error) {
-    return next(new ErrorHandler('Funds transfer failed', 500));
-   }
+        await Wallet.updateOne({ user: senderId }, { balance: updatedSendersBalance });
+        await Wallet.updateOne({ accountNumber: receiverAccountNumber }, { balance: updateReceiversBalance });
+
+        //Record the transaction
+        await Transaction.create({
+            sender: senderId,
+            receiver: receiverWallet.user,
+            amount,
+            description
+        })
+        // return successful transaction response
+        res.status(200).json({
+            message: "Loan transfer successful"
+        })
+    } catch (error) {
+        console.log(error);
+        return next(new ErrorHandler("Funds transfer failed", error, 500))
+    }
+    
 })
 
-modules.exports= { PeerLoanTransfer };
+module.exports = { peerLoanTransfer };
