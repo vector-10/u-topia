@@ -5,6 +5,7 @@ const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 
 
 const createWallet = catchAsyncErrors(async (req, res, next) => {
+  const { transferPin } = req.body;
     try {
         // to get the user ID from the authentication
         const userId = req.params.userId;
@@ -19,7 +20,7 @@ const createWallet = catchAsyncErrors(async (req, res, next) => {
         if(existingWallet) {
             return next(new ErrorHandler("User already has a wallet in the database", 403));
         }
-        const newWallet = new Wallet({ user: userId });
+        const newWallet = new Wallet({ user: userId, transferPin: transferPin });
 
         //save the wallet to the database
         await newWallet.save();
@@ -29,7 +30,8 @@ const createWallet = catchAsyncErrors(async (req, res, next) => {
          wallet: {
           user: newWallet.user,
           balance: newWallet.balance,
-          accountNumber: newWallet.accountNumber
+          accountNumber: newWallet.accountNumber,
+          transferPin
          }
         });
     } catch (error) {
@@ -50,7 +52,7 @@ const getWalletBalance = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler('Wallet not found', 404));
     }
 
-    res.status(200).json({ balance: wallet.balance });
+    res.status(200).json({ message: " balance request successful", balance: wallet.balance });
   } catch (error) {
     return next(new ErrorHandler('Error getting wallet balance', 500));
   }

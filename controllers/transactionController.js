@@ -8,7 +8,7 @@ const Wallet = require('../models/walletModel');
 const peerLoanTransfer = catchAsyncErrors(async(req, res, next) => {
     const senderId = req.params.senderId;
     // set the requied parameters for a loan transfer to occur
-    const { amount, transferPin, description, receiverAccountNumber } = req.body;
+    const { amount, pin, description, receiverAccountNumber } = req.body;
 
     try {
         // now to verify the sender and receiver
@@ -19,15 +19,16 @@ const peerLoanTransfer = catchAsyncErrors(async(req, res, next) => {
             return next(ErrorHandler("Invalid sender or receiver credentials", 400 ))
         }
         //  Ensure that the sender has enough money for the transfer
-        const senderWallet = await Wallet.findOne({ user: senderId});
+        const senderWallet = await Wallet.findOne({ user: senderId });
         // validation if amount if more than senders balance and throw error
         if(!senderWallet || senderWallet.balance < amount ) {
             return next(new ErrorHandler("Insufficient funds in senders wallet", 400))
         }
         // validate pin to ensure its accurate
-        if(transferPin !== senderWallet.transferPin.toString()){
-            return next( new ErrorHandler("Invalid transfer PIN entered", 400 ))
+        if (!senderWallet || !senderWallet.transferPin || pin !== senderWallet.transferPin.toString()) {
+            return next(new ErrorHandler("Invalid pin entered", 400))
         }
+        
 
         // update sender and receivers balance
         const updatedSendersBalance = senderWallet.balance - amount;

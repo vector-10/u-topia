@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const User = require('../models/authModels');
+
 
 const generateAccountNumber = () => {
   const min = 1000000000;
@@ -16,6 +16,11 @@ const walletSchema = new mongoose.Schema({
   balance: {
     type: Number,
     default: 100000,
+  },
+  transferPin:{
+    type: Number,
+    maxlength: 4,
+    required: [true, "Please choose a 4 digit transfer pin"]
   },
   accountNumber: {
     type: String,

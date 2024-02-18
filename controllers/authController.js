@@ -11,7 +11,7 @@ const createNewUser = catchAsyncErrors(async(req, res, next) => {
   try {
   // first we set the parameters needed from the user to the req.body
   const { firstName, middleName, lastName, dateOfBirth, gender, nationality, salutation, address, email,
-     mobileNumber, password, confirmPassword, bvn, transferPin, maritalStatus, occupation,
+     mobileNumber, password, confirmPassword, bvn, maritalStatus, occupation,
       employmentStatus, sourceofIncome, city, state} = req.body;
 
       // to ensure the password and confirm password values are the same
@@ -38,7 +38,7 @@ const createNewUser = catchAsyncErrors(async(req, res, next) => {
       //Now we create a new user with database operations
       const user = await User.create({
         name, dateOfBirth, gender, nationality, salutation, address, email,
-     mobileNumber, password, bvn, transferPin, maritalStatus, occupation,
+     mobileNumber, password, bvn, maritalStatus, occupation,
       employmentStatus, sourceofIncome, city, state, role
       });
       
@@ -133,6 +133,7 @@ const updateProfile = catchAsyncErrors(async(req, res, next) => {
   user.email = req.body.email || user.email;
   user.mobileNumber = req.body.mobileNumber || user.mobileNumber;
   user.occupation = req.body.occupation || user.occupation;
+  user.sourceofIncome = req.body.sourceofIncome || user.sourceofIncome;
   user.city = req.body.city || user.city;
   user.state = req.body.state || user.state;
   user.employmentStatus = req.body.employmentStatus || user.employmentStatus;

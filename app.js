@@ -28,7 +28,7 @@ app.use('/api/v1', userAuthRoute);
 app.use('/api/v1', companyRoute);
 app.use('/api/v1', walletRoute);
 app.use('/api/v1', jobRoute);
-app.use('api/v1', transactionRoute);
+app.use('/api/v1', transactionRoute);
 
 
 

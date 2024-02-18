@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { peerLoanTransfer } = require('../controllers/transactionController');
 
-router.route('user/peer-loan/:senderId').post(peerLoanTransfer);
+router.route('/user/peer-loan/:senderId').post(peerLoanTransfer);
 
 
 

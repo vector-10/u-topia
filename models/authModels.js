@@ -57,11 +57,6 @@ const authSchema = new mongoose.Schema({
         required: [true, "Please provide a BVN for verification"],
         // unique: true,
       },
-      transferPin:{
-        type: Number,
-        maxlength: 4,
-        required: [true, "Please choose a 4 digit transfer pin"]
-      },
       role: {
         type: String,
         required:[true, "Please select a role on the platform"],
