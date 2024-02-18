@@ -31,8 +31,8 @@ const peerLoanTransfer = catchAsyncErrors(async(req, res, next) => {
         
 
         // update sender and receivers balance
-        const updatedSendersBalance = senderWallet.balance - amount;
-        const updateReceiversBalance = receiverWallet.balance + amount;
+        const updatedSendersBalance = Number(senderWallet.balance ) - Number(amount);
+        const updateReceiversBalance = Number(receiverWallet.balance) + Number(amount);
 
         await Wallet.updateOne({ user: senderId }, { balance: updatedSendersBalance });
         await Wallet.updateOne({ accountNumber: receiverAccountNumber }, { balance: updateReceiversBalance });
