@@ -7,7 +7,7 @@ const authSchema = new mongoose.Schema({
     // Personal Information
       name: {
         type: String,
-        required: [true, "Please provide a FirstName to create an account"],
+        required: [true, "Please provide a name to create an account"],
         minlength: 3,
         maxlength: [40, "Your FirstName should not exceed 20 characters"],
       },
