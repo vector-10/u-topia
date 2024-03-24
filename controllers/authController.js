@@ -281,7 +281,7 @@ const getUserProfileDetails = catchAsyncErrors(async(req, res, next) => {
 //Get all users => /api/v1/admin/deleteUser
 const deleteUser = catchAsyncErrors(async(req, res, next) => {
   // get the user throught the ID
-  const userId = await req.params.id;
+  const userId = req.params.id;
   const user = await User.findById(userId);
   //basic validation
   if(!user){
@@ -298,7 +298,7 @@ const deleteUser = catchAsyncErrors(async(req, res, next) => {
 //Get all users => /api/v1/admin/deleteCompany
 const deleteCompany = catchAsyncErrors(async(req, res, next) => {
   // get the user throught the ID
-  const companyId = await req.params.id;
+  const companyId = req.params.id;
   const company = await Company.findById(companyId);
   //basic validation
   if(!company){
