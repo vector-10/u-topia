@@ -110,7 +110,7 @@ authSchema.pre("save", async function (next) {
     }
 
     this.password = await bcrypt.hash(this.password, 10);
-
+// to hash transacion pins
     if (this.isModified("transferPin")) {
         this.transferPin = await bcrypt.hash(this.transferPin.toString(), 10);
     }
